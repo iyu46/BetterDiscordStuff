@@ -2,7 +2,7 @@
  * @name ChannelTabs
  * @author samfundev, l0c4lh057, CarJem Generations
  * @description Allows you to have multiple tabs and bookmark channels.
- * @version 2.7.5
+ * @version 2.7.6
  * @authorId 76052829285916672
  * @donate https://github.com/sponsors/samfundev
  * @source https://github.com/samfundev/BetterDiscordStuff/blob/master/src/ChannelTabs/index.jsx
@@ -31,6 +31,11 @@
 
 @else@*/
 const CHANGES = {
+	"2.7.6": {
+		fixed: [
+			"Fixed server icons not loading",
+		],
+	},
 	"2.7.4": {
 		fixed: [
 			"Fixed being able to drag the window in the settings",
@@ -197,6 +202,8 @@ var [TitleBar, TitleBarKey] = Webpack.getWithKey(
 );
 if (!TitleBar) missingModule({ name: "TitleBar", fatal: true });
 var IconUtilities = getModule(byKeys("getChannelIconURL"));
+var getGuildIconURL = (guild) => IconUtilities.getGuildIconURL({ id: guild.id, icon: guild.icon, canAnimate: false, size: 40 })
+
 var standardSidebarView =
 	BdApi.Webpack.getByKeys("standardSidebarView")?.standardSidebarView ?? "";
 var Icons = {
@@ -345,7 +352,7 @@ function CreateGuildContextMenuChildren(instance, props, channel) {
 										props.guild.id,
 										channel.id,
 										"#" + channel.name,
-										props.guild.getIconURL() || "",
+										getGuildIconURL(props.guild) || "",
 									),
 							},
 							{
@@ -354,7 +361,7 @@ function CreateGuildContextMenuChildren(instance, props, channel) {
 									TopBarRef.current &&
 									TopBarRef.current.addToFavs(
 										"#" + channel.name,
-										props.guild.getIconURL() || "",
+										getGuildIconURL(props.guild) || "",
 										`/channels/${props.guild.id}/${channel.id}`,
 										channel.id,
 									),
@@ -367,7 +374,7 @@ function CreateGuildContextMenuChildren(instance, props, channel) {
 									TopBarRef.current &&
 									TopBarRef.current.addToFavs(
 										props.guild.name,
-										props.guild.getIconURL() || "",
+										getGuildIconURL(props.guild) || "",
 										`/channels/${props.guild.id}`,
 										void 0,
 										props.guild.id,
@@ -398,7 +405,7 @@ function CreateTextChannelContextMenuChildren(instance, props) {
 										props.guild.id,
 										props.channel.id,
 										"#" + props.channel.name,
-										props.guild.getIconURL() || "",
+										getGuildIconURL(props.guild) || "",
 									),
 							},
 						],
@@ -409,7 +416,7 @@ function CreateTextChannelContextMenuChildren(instance, props) {
 									TopBarRef.current &&
 									TopBarRef.current.addToFavs(
 										"#" + props.channel.name,
-										props.guild.getIconURL() || "",
+										getGuildIconURL(props.guild) || "",
 										`/channels/${props.guild.id}/${props.channel.id}`,
 										props.channel.id,
 									),
@@ -1772,7 +1779,7 @@ var getCurrentIconUrl = (pathname = location.pathname) => {
 					return UserStore.getUser(channel.getRecipientId()).getAvatarURL();
 				return IconUtilities.getChannelIconURL(channel);
 			} else if (!gId.startsWith("@")) {
-				return GuildStore.getGuild(gId).getIconURL();
+				return getGuildIconURL(GuildStore.getGuild(gId))
 			}
 		}
 	} catch (error) {
